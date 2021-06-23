@@ -1,6 +1,6 @@
 package bls
 
-// #cgo LDFLAGS: -L../ -ldusk_bls12_381_sign
+// #cgo LDFLAGS: -L../ -ldusk_bls12_381_sign -ldl -lm
 // #include "../libbls.h"
 import "C"
 import (
