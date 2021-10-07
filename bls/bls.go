@@ -4,12 +4,25 @@ package bls
 // #cgo linux LDFLAGS: -L../ -ldusk_bls12_381_sign_linux -ldl -lm
 // #include "../libbls.h"
 import "C"
+
 import (
 	"errors"
 	"unsafe"
 )
 
-func GenerateKeys() ([]byte, []byte) {
+// the following names are set up as variables referring to the default cgo
+// binaries defined below. This enables the functions to be swapped with zero
+// additional call cost
+var (
+	GenerateKeys = CgoGenerateKeys
+	Sign         = CgoSign
+	Verify       = CgoVerify
+	CreateApk    = CgoCreateApk
+	AggregatePk  = CgoAggregatePk
+	AggregateSig = CgoAggregateSig
+)
+
+var CgoGenerateKeys = func() ([]byte, []byte) {
 	skBuf := make([]byte, C.SK_SIZE)
 	pkBuf := make([]byte, C.PK_SIZE)
 
@@ -20,7 +33,7 @@ func GenerateKeys() ([]byte, []byte) {
 	return skBuf, pkBuf
 }
 
-func Sign(sk, pk, msg []byte) ([]byte, error) {
+var CgoSign = func(sk, pk, msg []byte) ([]byte, error) {
 	sk_ptr := toPtr(sk)
 	pk_ptr := toPtr(pk)
 	msg_ptr := toPtr(msg)
@@ -30,7 +43,7 @@ func Sign(sk, pk, msg []byte) ([]byte, error) {
 	return sigBuf, formatErr(code)
 }
 
-func Verify(apk, sig, msg []byte) error {
+var CgoVerify = func(apk, sig, msg []byte) error {
 	apk_ptr := toPtr(apk)
 	sig_ptr := toPtr(sig)
 	msg_ptr := toPtr(msg)
@@ -38,7 +51,7 @@ func Verify(apk, sig, msg []byte) error {
 	return formatErr(code)
 }
 
-func CreateApk(pk []byte) ([]byte, error) {
+var CgoCreateApk = func(pk []byte) ([]byte, error) {
 	pk_ptr := toPtr(pk)
 	apkBuf := make([]byte, C.PK_SIZE)
 	apk_ptr := toPtr(apkBuf)
@@ -46,7 +59,7 @@ func CreateApk(pk []byte) ([]byte, error) {
 	return apkBuf, formatErr(code)
 }
 
-func AggregatePk(apk []byte, pks ...[]byte) ([]byte, error) {
+var CgoAggregatePk = func(apk []byte, pks ...[]byte) ([]byte, error) {
 	apk_ptr := toPtr(apk)
 	pkBytes := make([]byte, 0)
 	for _, pk := range pks {
@@ -60,7 +73,7 @@ func AggregatePk(apk []byte, pks ...[]byte) ([]byte, error) {
 	return retBuf, formatErr(code)
 }
 
-func AggregateSig(sig []byte, sigs ...[]byte) ([]byte, error) {
+var CgoAggregateSig = func(sig []byte, sigs ...[]byte) ([]byte, error) {
 	sig_ptr := toPtr(sig)
 	sigBytes := make([]byte, 0)
 	for _, sig := range sigs {
