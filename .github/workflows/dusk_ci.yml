@@ -24,3 +24,14 @@ jobs:
         run: rustup component add rustfmt
       - name: Test
         run: make test
+      - name: Upload object for platform
+        uses: actions/upload-artifact@v2
+        with:
+          name: libdusk_bls12_381_sign_${{ matrix.os }}
+          path: bls12_381-sign/target/release/libdusk_bls12_381_sign.a
+      - name: Upload microservice for platform
+        uses: actions/upload-artifact@v2
+        with:
+          name: bls12381svc_${{ matrix.os }}
+          path: bls12_381-sign/target/release/bls12381svc
+
