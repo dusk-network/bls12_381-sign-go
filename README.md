@@ -1,6 +1,8 @@
-# Wrapper library for CGo calls to [dusk-bls12_381-sign](https://github.com/dusk-network/bls12_381-sign)
+# Wrapper library for CGo and gRPC calls to [dusk-bls12_381-sign](https://github.com/dusk-network/bls12_381-sign)
 
-This library provides wrapper functions which make CGo calls to the BLS signature crate linked above.
+This library provides wrapper functions which make CGo calls to the BLS 
+signature crate linked above, as well as instead running it as a service and 
+directing calls through this route.
 
 ## Building
 
@@ -10,7 +12,8 @@ To obtain the `dusk-bls12_381-sign` library, run:
 make build
 ```
 
-This will create the static C library for you and link it with the Go binary.
+This will create the static C library for you and link it with the Go binary,
+as well as .
 
 ## Testing
 
