@@ -3,8 +3,8 @@ build :
 	git clone https://github.com/dusk-network/bls12_381-sign
 	cd bls12_381-sign && git checkout microservice && cargo build --release
     # this covers both platform build checks
-	cp bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_linux.a
-	mv bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_darwin.a
+	cp bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_linux-latest.a
+	mv bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_darwin-latest.a
 	# todo: also move bls12381svc binary, maybe embed?
 	 go build ./...
 
