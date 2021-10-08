@@ -28,7 +28,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: libdusk_bls12_381_sign_${{ matrix.os }}.a
-          path: libdusk_bls12_381_sign_${{ matrix.os }}.a
+          path: bls12_381-sign/target/release/libdusk_bls12_381_sign.a
       - name: Upload microservice for platform
         uses: actions/upload-artifact@v2
         with:
