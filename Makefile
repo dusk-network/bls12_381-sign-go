@@ -4,7 +4,7 @@ build :
 	cd bls12_381-sign && git checkout microservice && cargo build --release
     # this covers both platform build checks
 	cp bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_ubuntu-latest.a
-	mv bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_darwin-latest.a
+	mv bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_macos-latest.a
 	# todo: also move bls12381svc binary, maybe embed?
 	 go build ./...
 
