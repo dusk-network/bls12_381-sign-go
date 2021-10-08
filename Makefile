@@ -12,3 +12,5 @@ test: build
 bench: build
 	go test -v -bench=. ./...
 
+clean:
+	rm /tmp/bls12381svc*

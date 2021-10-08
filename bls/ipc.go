@@ -1,5 +1,13 @@
 package bls
 
+import (
+	"io/ioutil"
+	"os"
+	"os/exec"
+
+	bls12381svc "github.com/dusk-network/bls12_381-sign-go"
+)
+
 func SwitchToCgo() {
 	ipc.disconnect()
 	GenerateKeys = CgoGenerateKeys
@@ -20,18 +28,49 @@ func SwitchToIPC() {
 	AggregateSig = IPCAggregateSig
 }
 
-type ipcState struct{}
+type ipcState struct {
+	connected bool
+	cmd       *exec.Cmd
+}
 
-const ipcPath = "/tmp/bls12381svc.sock"
+const (
+	ipcPath       = "/tmp/bls12381svc.sock"
+	ipcSvcBinPath = "/tmp/bls12381svc"
+)
 
 var ipc = new(ipcState)
 
 func (s *ipcState) connect() {
+	if _, err := os.Stat(ipcSvcBinPath); os.IsNotExist(err) {
+		// write the IPC service binary to disk
+		if err = ioutil.WriteFile(ipcSvcBinPath, bls12381svc.Binary, 0o700); err != nil {
+			panic(err) // not sure what better to do just yet
+		}
+	}
+	// spawn the IPC service
+	s.cmd = exec.Command(ipcSvcBinPath)
+	if err := s.cmd.Start(); err != nil {
+		panic(err)
+	}
 	// connect the IPC
+
+	s.connected = true
 }
 
 func (s *ipcState) disconnect() {
+	if !s.connected {
+		return
+	}
 	// disconnect the IPC
+
+	// stop the IPC service
+	if err := s.cmd.Process.Kill(); err != nil {
+		panic(err)
+	}
+	// remove the socket file
+	if err := os.Remove(ipcPath); err != nil {
+		panic(err)
+	}
 }
 
 var IPCGenerateKeys = func() (secret []byte, public []byte) {
