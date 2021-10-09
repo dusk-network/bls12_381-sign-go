@@ -1,13 +1,16 @@
 package bls
 
-//
-// func TestSwitchToIPC(t *testing.T) {
-// 	ipc.connect()
-// }
-//
-// func TestSwitchToCgo(t *testing.T) {
-// 	ipc.disconnect()
-// }
+import (
+	"testing"
+)
+
+func TestSwitchToIPC(t *testing.T) {
+	ipc.connect()
+}
+
+func TestSwitchToCgo(t *testing.T) {
+	ipc.disconnect()
+}
 
 //
 // func TestGenerateKeysIPC(t *testing.T) {

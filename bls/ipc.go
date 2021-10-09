@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"syscall"
+	"time"
 
 	bls12381svc "github.com/dusk-network/bls12_381-sign-go"
 )
@@ -42,25 +44,32 @@ const (
 var ipc = new(ipcState)
 
 func (s *ipcState) connect() {
-	// if _, err := os.Stat(ipcSvcBinPath); os.IsNotExist(err) {
-	// write the IPC service binary to disk
-	fmt.Fprintln(os.Stderr, "writing service binary to", ipcSvcBinPath,
-		"...",
-	)
-	if err := ioutil.WriteFile(
-		ipcSvcBinPath, bls12381svc.Binary, 0o700,
-	); err != nil {
-		panic(err) // not sure what better to do just yet
+	if s.connected {
+		return
 	}
-	// }
-	// // spawn the IPC service
-	// s.cmd = exec.Command(ipcSvcBinPath)
-	// if err := s.cmd.Start(); err != nil {
-	// 	panic(err)
-	// }
+	if _, err := os.Stat(ipcSvcBinPath); os.IsNotExist(err) {
+		// write the IPC service binary to disk
+		fmt.Fprintln(os.Stderr, "writing service binary to", ipcSvcBinPath,
+			"...",
+		)
+		if err := ioutil.WriteFile(
+			ipcSvcBinPath, bls12381svc.Binary, 0o700,
+		); err != nil {
+			panic(err) // not sure what better to do just yet
+		}
+	}
+	// spawn the IPC service
+	s.cmd = exec.Command(ipcSvcBinPath)
+	s.cmd.Stdout = os.Stdout
+	s.cmd.Stdin = os.Stdin
+	s.cmd.Stderr = os.Stderr
+	if err := s.cmd.Start(); err != nil {
+		panic(err)
+	}
 	// connect the IPC
 
 	s.connected = true
+	time.Sleep(time.Second * 2)
 }
 
 func (s *ipcState) disconnect() {
@@ -69,15 +78,19 @@ func (s *ipcState) disconnect() {
 	}
 	// disconnect the IPC
 
-	// // stop the IPC service
-	// if err := s.cmd.Process.Kill(); err != nil {
-	// 	panic(err)
-	// }
+	// stop the IPC service
+	if err := s.cmd.Process.Signal(syscall.SIGINT); err != nil {
+		panic(err)
+	}
+	fmt.Fprintln(os.Stderr, "stopped process", ipcSvcBinPath)
+
 	// remove the socket file
 	if err := os.Remove(ipcPath); err != nil {
 		// panic(err)
 		fmt.Println(err)
 	}
+	fmt.Fprintln(os.Stderr, "removed socket", ipcPath)
+
 	// // remove the service binary
 	// if err := os.Remove(ipcSvcBinPath); err != nil {
 	// 	// panic(err)
