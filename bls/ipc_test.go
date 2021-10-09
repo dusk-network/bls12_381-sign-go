@@ -5,11 +5,11 @@ import (
 )
 
 func TestSwitchToIPC(t *testing.T) {
-	ipc.connect()
+	SwitchToIPC()
 }
 
 func TestSwitchToCgo(t *testing.T) {
-	ipc.disconnect()
+	SwitchToCgo()
 }
 
 func TestIPC(t *testing.T) {
