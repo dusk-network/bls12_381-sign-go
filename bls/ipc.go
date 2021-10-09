@@ -1,6 +1,7 @@
 package bls
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -41,17 +42,22 @@ const (
 var ipc = new(ipcState)
 
 func (s *ipcState) connect() {
-	if _, err := os.Stat(ipcSvcBinPath); os.IsNotExist(err) {
-		// write the IPC service binary to disk
-		if err = ioutil.WriteFile(ipcSvcBinPath, bls12381svc.Binary, 0o700); err != nil {
-			panic(err) // not sure what better to do just yet
-		}
+	// if _, err := os.Stat(ipcSvcBinPath); os.IsNotExist(err) {
+	// write the IPC service binary to disk
+	fmt.Fprintln(os.Stderr, "writing service binary to", ipcSvcBinPath,
+		"...",
+	)
+	if err := ioutil.WriteFile(
+		ipcSvcBinPath, bls12381svc.Binary, 0o700,
+	); err != nil {
+		panic(err) // not sure what better to do just yet
 	}
-	// spawn the IPC service
-	s.cmd = exec.Command(ipcSvcBinPath)
-	if err := s.cmd.Start(); err != nil {
-		panic(err)
-	}
+	// }
+	// // spawn the IPC service
+	// s.cmd = exec.Command(ipcSvcBinPath)
+	// if err := s.cmd.Start(); err != nil {
+	// 	panic(err)
+	// }
 	// connect the IPC
 
 	s.connected = true
@@ -63,14 +69,20 @@ func (s *ipcState) disconnect() {
 	}
 	// disconnect the IPC
 
-	// stop the IPC service
-	if err := s.cmd.Process.Kill(); err != nil {
-		panic(err)
-	}
+	// // stop the IPC service
+	// if err := s.cmd.Process.Kill(); err != nil {
+	// 	panic(err)
+	// }
 	// remove the socket file
 	if err := os.Remove(ipcPath); err != nil {
-		panic(err)
+		// panic(err)
+		fmt.Println(err)
 	}
+	// // remove the service binary
+	// if err := os.Remove(ipcSvcBinPath); err != nil {
+	// 	// panic(err)
+	// 	fmt.Println(err)
+	// }
 }
 
 var IPCGenerateKeys = func() (secret []byte, public []byte) {

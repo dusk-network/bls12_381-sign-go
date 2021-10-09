@@ -1,6 +1,15 @@
 package bls
 
 //
+// func TestSwitchToIPC(t *testing.T) {
+// 	ipc.connect()
+// }
+//
+// func TestSwitchToCgo(t *testing.T) {
+// 	ipc.disconnect()
+// }
+
+//
 // func TestGenerateKeysIPC(t *testing.T) {
 // 	SwitchToIPC()
 // 	TestGenerateKeysIPC(t)
