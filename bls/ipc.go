@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"syscall"
-	"time"
 
 	bls12381svc "github.com/dusk-network/bls12_381-sign-go"
 )
@@ -69,7 +68,6 @@ func (s *ipcState) connect() {
 	// connect the IPC
 
 	s.connected = true
-	time.Sleep(time.Second * 2)
 }
 
 func (s *ipcState) disconnect() {
