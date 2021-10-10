@@ -9,11 +9,11 @@ build:
 	fi;
 	cd bls/bls12_381-sign \
 	&& git checkout microservice \
-	&& cargo build --release \
 	&& cd ../.. \
 	&& protoc --proto_path=bls/bls12_381-sign/proto \
 		bls/bls12_381-sign/proto/bls12381sig.proto \
 		--go_opt=paths=source_relative --go_out=plugins=grpc:bls/proto  \
+	&& cargo build --release \
 	&& go build ./...
 
 test: build
