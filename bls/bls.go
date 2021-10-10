@@ -14,15 +14,20 @@ import (
 // binaries defined below. This enables the functions to be swapped with zero
 // additional call cost
 var (
-	GenerateKeys = CgoGenerateKeys
-	Sign         = CgoSign
-	Verify       = CgoVerify
-	CreateApk    = CgoCreateApk
-	AggregatePk  = CgoAggregatePk
-	AggregateSig = CgoAggregateSig
+	GenerateKeys = cgo.GenerateKeys
+	Sign         = cgo.Sign
+	Verify       = cgo.Verify
+	CreateApk    = cgo.CreateApk
+	AggregatePk  = cgo.AggregatePk
+	AggregateSig = cgo.AggregateSig
 )
 
-var CgoGenerateKeys = func() ([]byte, []byte) {
+// Cgo is a stateless binary interface to the API
+type Cgo struct{}
+
+var cgo = &Cgo{}
+
+func (*Cgo) GenerateKeys() ([]byte, []byte) {
 	skBuf := make([]byte, C.SK_SIZE)
 	pkBuf := make([]byte, C.PK_SIZE)
 
@@ -33,7 +38,7 @@ var CgoGenerateKeys = func() ([]byte, []byte) {
 	return skBuf, pkBuf
 }
 
-var CgoSign = func(sk, pk, msg []byte) ([]byte, error) {
+func (*Cgo) Sign(sk, pk, msg []byte) ([]byte, error) {
 	sk_ptr := toPtr(sk)
 	pk_ptr := toPtr(pk)
 	msg_ptr := toPtr(msg)
@@ -43,7 +48,7 @@ var CgoSign = func(sk, pk, msg []byte) ([]byte, error) {
 	return sigBuf, formatErr(code)
 }
 
-var CgoVerify = func(apk, sig, msg []byte) error {
+func (*Cgo) Verify(apk, sig, msg []byte) error {
 	apk_ptr := toPtr(apk)
 	sig_ptr := toPtr(sig)
 	msg_ptr := toPtr(msg)
@@ -51,7 +56,7 @@ var CgoVerify = func(apk, sig, msg []byte) error {
 	return formatErr(code)
 }
 
-var CgoCreateApk = func(pk []byte) ([]byte, error) {
+func (*Cgo) CreateApk(pk []byte) ([]byte, error) {
 	pk_ptr := toPtr(pk)
 	apkBuf := make([]byte, C.PK_SIZE)
 	apk_ptr := toPtr(apkBuf)
@@ -59,7 +64,7 @@ var CgoCreateApk = func(pk []byte) ([]byte, error) {
 	return apkBuf, formatErr(code)
 }
 
-var CgoAggregatePk = func(apk []byte, pks ...[]byte) ([]byte, error) {
+func (*Cgo) AggregatePk(apk []byte, pks ...[]byte) ([]byte, error) {
 	apk_ptr := toPtr(apk)
 	pkBytes := make([]byte, 0)
 	for _, pk := range pks {
@@ -73,7 +78,7 @@ var CgoAggregatePk = func(apk []byte, pks ...[]byte) ([]byte, error) {
 	return retBuf, formatErr(code)
 }
 
-var CgoAggregateSig = func(sig []byte, sigs ...[]byte) ([]byte, error) {
+func (*Cgo) AggregateSig(sig []byte, sigs ...[]byte) ([]byte, error) {
 	sig_ptr := toPtr(sig)
 	sigBytes := make([]byte, 0)
 	for _, sig := range sigs {
