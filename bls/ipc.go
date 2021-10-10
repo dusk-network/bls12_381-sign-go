@@ -11,23 +11,23 @@ import (
 )
 
 func SwitchToCgo() {
-	// ipc.disconnect()
-	// GenerateKeys = CgoGenerateKeys
-	// Sign = CgoSign
-	// Verify = CgoVerify
-	// CreateApk = CgoCreateApk
-	// AggregatePk = CgoAggregatePk
-	// AggregateSig = CgoAggregateSig
+	ipc.disconnect()
+	GenerateKeys = CgoGenerateKeys
+	Sign = CgoSign
+	Verify = CgoVerify
+	CreateApk = CgoCreateApk
+	AggregatePk = CgoAggregatePk
+	AggregateSig = CgoAggregateSig
 }
 
 func SwitchToIPC() {
-	// ipc.connect()
-	// GenerateKeys = IPCGenerateKeys
-	// Sign = IPCSign
-	// Verify = IPCVerify
-	// CreateApk = IPCCreateApk
-	// AggregatePk = IPCAggregatePk
-	// AggregateSig = IPCAggregateSig
+	ipc.connect()
+	GenerateKeys = IPCGenerateKeys
+	Sign = IPCSign
+	Verify = IPCVerify
+	CreateApk = IPCCreateApk
+	AggregatePk = IPCAggregatePk
+	AggregateSig = IPCAggregateSig
 }
 
 type ipcState struct {

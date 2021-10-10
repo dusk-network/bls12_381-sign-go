@@ -12,8 +12,13 @@ To obtain the `dusk-bls12_381-sign` library, run:
 make build
 ```
 
-This will create the static C library for you and link it with the Go binary,
-as well as .
+This will create the static C library for you and link it with the Go binary 
+via cgo, as well as the microservice binary, and last but not least, 
+generates the Go grpc/protobuf which is placed in `bls/proto/bls12381sig.pb.go`.
+
+The generated code is used by the functions in ipc*.go to encode requests 
+and decode responses from the Rust gRPC protobuf service that runs to 
+provide the API in this mode.
 
 ## Testing
 
