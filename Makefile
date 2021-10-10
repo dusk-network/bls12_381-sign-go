@@ -1,4 +1,4 @@
-build :
+build:
 	if [ -d bls/bls12_381-sign ]; \
 	then \
 		cd bls/bls12_381-sign \
@@ -25,3 +25,9 @@ bench: build
 clean:
 	rm -fv /tmp/bls12381svc*
 	rm -rfv bls/bls12_381-sign
+
+installprotocubuntu: # like it says on the tin
+	sudo apt install -y protobuf-compiler
+	go install google.golang.org/grpc
+	go install github.com/golang/protobuf/protoc-gen-go
+
