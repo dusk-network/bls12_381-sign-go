@@ -1,9 +1,20 @@
 build :
-	rm -rf bls12_381-sign || true
-	git clone https://github.com/dusk-network/bls12_381-sign
-	cd bls12_381-sign && git checkout microservice && cargo build --release
-	protoc --proto_path=bls12_381-sign/proto bls12_381-sign/proto/bls12381sig.proto --go_opt=paths=source_relative --go_out=plugins=grpc:bls/proto
-	 go build ./...
+	if [ -d bls/bls12_381-sign ]; \
+	then \
+		cd bls/bls12_381-sign \
+		&& git pull; \
+	else \
+  		cd bls \
+  		&& git clone https://github.com/dusk-network/bls12_381-sign; \
+	fi;
+	cd bls/bls12_381-sign \
+	&& git checkout microservice \
+	&& cargo build --release \
+	&& cd ../.. \
+	&& protoc --proto_path=bls/bls12_381-sign/proto \
+		bls/bls12_381-sign/proto/bls12381sig.proto \
+		--go_opt=paths=source_relative --go_out=plugins=grpc:bls/proto  \
+	&& go build ./...
 
 test: build
 	go test -v ./...
@@ -12,4 +23,5 @@ bench: build
 	go test -v -bench=. ./...
 
 clean:
-	rm /tmp/bls12381svc*
+	rm -fv /tmp/bls12381svc*
+	rm -rfv bls/bls12_381-sign
