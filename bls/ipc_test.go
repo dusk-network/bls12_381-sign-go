@@ -11,33 +11,33 @@ import (
 
 func TestIPC(t *testing.T) {
 	SwitchToIPC()
-	// TestGenerateKeys(t)
-	// TestSignVerify(t)
-	// TestVerifyWrongKey(t)
-	TestAggregation(t)
-	SwitchToCgo()
+	defer SwitchToCgo()
+	TestGenerateKeys(t)
+	TestSignVerify(t)
+	TestVerifyWrongKey(t)
+	// TestAggregation(t)
 }
 
 func BenchmarkSignIPC(b *testing.B) {
 	SwitchToIPC()
+	defer SwitchToCgo()
 	BenchmarkSign(b)
-	SwitchToCgo()
 }
 
 func BenchmarkVerifyIPC(b *testing.B) {
 	SwitchToIPC()
+	defer SwitchToCgo()
 	BenchmarkVerify(b)
-	SwitchToCgo()
 }
 
 func BenchmarkAggregatePkIPC(b *testing.B) {
 	SwitchToIPC()
+	defer SwitchToCgo()
 	BenchmarkAggregatePk(b)
-	SwitchToCgo()
 }
 
 func BenchmarkAggregateSigIPC(b *testing.B) {
 	SwitchToIPC()
+	defer SwitchToCgo()
 	BenchmarkAggregateSig(b)
-	SwitchToCgo()
 }

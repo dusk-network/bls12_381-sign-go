@@ -212,6 +212,7 @@ func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
 			Message:   msg,
 		},
 	)
+	eprintln(vr, err)
 	if !vr.GetValid() {
 		return errors.New("invalid signature")
 	}
@@ -229,6 +230,9 @@ func (s *ipcState) CreateApk(pk []byte) (apk []byte, err error) {
 			PublicKey: pk,
 		},
 	)
+	if err != nil {
+		return a.GetAPK(), err
+	}
 	return a.GetAPK(), err
 }
 
