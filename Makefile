@@ -16,6 +16,7 @@ build:
 	&& cd bls/bls12_381-sign \
 	&& cargo build --release \
 	&& cd ../.. \
+	&& cp bls/bls12_381-sign/target/release/bls12381svc bls12381svc_ubuntu-latest \
 	&& go build ./...
 
 test: build

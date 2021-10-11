@@ -4,43 +4,40 @@ import (
 	"testing"
 )
 
-func TestSwitchToIPC(t *testing.T) {
-	SwitchToIPC()
-}
-
-func TestSwitchToCgo(t *testing.T) {
-	SwitchToCgo()
-}
+// func TestSwitchToIPC(t *testing.T) {
+// 	SwitchToIPC()
+// 	SwitchToCgo()
+// }
 
 func TestIPC(t *testing.T) {
 	SwitchToIPC()
-	defer SwitchToCgo()
 	TestGenerateKeys(t)
-	TestSignVerify(t)
-	TestVerifyWrongKey(t)
-	TestAggregation(t)
+	// TestSignVerify(t)
+	// TestVerifyWrongKey(t)
+	// TestAggregation(t)
+	SwitchToCgo()
 }
 
 func BenchmarkSignIPC(b *testing.B) {
 	SwitchToIPC()
-	defer SwitchToCgo()
 	BenchmarkSign(b)
+	SwitchToCgo()
 }
 
 func BenchmarkVerifyIPC(b *testing.B) {
 	SwitchToIPC()
-	defer SwitchToCgo()
 	BenchmarkVerify(b)
+	SwitchToCgo()
 }
 
 func BenchmarkAggregatePkIPC(b *testing.B) {
 	SwitchToIPC()
-	defer SwitchToCgo()
 	BenchmarkAggregatePk(b)
+	SwitchToCgo()
 }
 
 func BenchmarkAggregateSigIPC(b *testing.B) {
 	SwitchToIPC()
-	defer SwitchToCgo()
 	BenchmarkAggregateSig(b)
+	SwitchToCgo()
 }
