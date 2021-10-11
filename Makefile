@@ -17,6 +17,7 @@ build:
 	&& cargo build --release \
 	&& cd ../.. \
 	&& cp bls/bls12_381-sign/target/release/bls12381svc bls12381svc_ubuntu-latest \
+	&& cp bls/bls12_381-sign/target/release/libdusk_bls12_381_sign.a libdusk_bls12_381_sign_ubuntu-latest.a \
 	&& go build ./...
 
 test: build

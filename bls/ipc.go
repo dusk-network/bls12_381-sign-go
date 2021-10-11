@@ -2,6 +2,7 @@ package bls
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -90,12 +91,12 @@ func (s *ipcState) connect() {
 		panic(err)
 	}
 
-	// eprintln("service started, waiting 3 seconds...")
-	// time.Sleep(time.Second * 3)
+	eprintln("service started, waiting 1 second...")
+	time.Sleep(time.Second)
 
 	// connect the IPC
 	dialer := func(ctx context.Context, path string) (net.Conn, error) {
-		return net.Dial("unix", ipcPath)
+		return net.Dial("tcp", ipcPath)
 	}
 
 	eprintln("dialing service at", ipcPath, "...")
@@ -203,13 +204,17 @@ func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
 		eprintln("attempting to call API without being connected")
 	}
 	eprintln("calling Verify...")
-	_, err = s.SignerClient.Verify(context.Background(),
+	var vr *proto.VerifyResponse
+	vr, err = s.SignerClient.Verify(context.Background(),
 		&proto.VerifyRequest{
 			Apk:       apk,
 			Signature: sig,
 			Message:   msg,
 		},
 	)
+	if !vr.GetValid() {
+		return errors.New("invalid signature")
+	}
 	return err
 }
 
@@ -234,7 +239,7 @@ func (s *ipcState) AggregatePk(apk []byte, pks ...[]byte) (
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
 	}
-	eprintln("calling AggregatePk...")
+	eprintln("calling AggregatePk...", apk, pks)
 	var a *proto.AggregateResponse
 	a, err = s.SignerClient.AggregatePK(context.Background(),
 		&proto.AggregatePKRequest{

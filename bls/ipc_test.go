@@ -11,10 +11,10 @@ import (
 
 func TestIPC(t *testing.T) {
 	SwitchToIPC()
-	TestGenerateKeys(t)
+	// TestGenerateKeys(t)
 	// TestSignVerify(t)
 	// TestVerifyWrongKey(t)
-	// TestAggregation(t)
+	TestAggregation(t)
 	SwitchToCgo()
 }
 
