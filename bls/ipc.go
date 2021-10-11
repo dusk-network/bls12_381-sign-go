@@ -59,7 +59,8 @@ type ipcState struct {
 }
 
 const (
-	ipcPath       = "/tmp/bls12381svc.sock"
+	// ipcPath       = "/tmp/bls12381svc.sock"
+	ipcPath       = "127.0.0.1:9476"
 	ipcSvcBinPath = "/tmp/bls12381svc"
 )
 
@@ -89,8 +90,8 @@ func (s *ipcState) connect() {
 		panic(err)
 	}
 
-	eprintln("service started, waiting 3 seconds...")
-	time.Sleep(time.Second * 3)
+	// eprintln("service started, waiting 3 seconds...")
+	// time.Sleep(time.Second * 3)
 
 	// connect the IPC
 	dialer := func(ctx context.Context, path string) (net.Conn, error) {
