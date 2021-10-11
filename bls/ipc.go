@@ -89,6 +89,9 @@ func (s *ipcState) connect() {
 		panic(err)
 	}
 
+	eprintln("service started, waiting 3 seconds...")
+	time.Sleep(time.Second * 3)
+
 	// connect the IPC
 	dialer := func(ctx context.Context, path string) (net.Conn, error) {
 		return net.Dial("unix", ipcPath)
