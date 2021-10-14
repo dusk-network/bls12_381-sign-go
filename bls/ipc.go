@@ -196,7 +196,9 @@ func (s *ipcState) Sign(sk, pk, msg []byte) (
 	if err != nil {
 		return nil, err
 	}
-	return sig.GetSignature(), nil
+	sign := sig.GetSignature()
+	eprintln("signature:", sign)
+	return sign, nil
 }
 
 func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
@@ -212,7 +214,7 @@ func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
 			Message:   msg,
 		},
 	)
-	eprintln(vr, err)
+	eprintln("verify:", vr, err)
 	if !vr.GetValid() {
 		return errors.New("invalid signature")
 	}
@@ -230,10 +232,9 @@ func (s *ipcState) CreateApk(pk []byte) (apk []byte, err error) {
 			PublicKey: pk,
 		},
 	)
-	if err != nil {
-		return a.GetAPK(), err
-	}
-	return a.GetAPK(), err
+	apk = a.GetAPK()
+	eprintln("apk:", apk)
+	return
 }
 
 func (s *ipcState) AggregatePk(apk []byte, pks ...[]byte) (
@@ -251,7 +252,9 @@ func (s *ipcState) AggregatePk(apk []byte, pks ...[]byte) (
 			Keys: pks,
 		},
 	)
-	return a.GetCode(), err
+	newApk = a.GetCode()
+	eprintln("new apk:", apk)
+	return
 }
 
 func (s *ipcState) AggregateSig(sig []byte, sigs ...[]byte) (
@@ -269,5 +272,7 @@ func (s *ipcState) AggregateSig(sig []byte, sigs ...[]byte) (
 			Signatures: sigs,
 		},
 	)
-	return a.GetCode(), err
+	aggregatedSig = a.GetCode()
+	eprintln("aggregated sig:", aggregatedSig)
+	return
 }

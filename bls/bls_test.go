@@ -70,6 +70,12 @@ func TestAggregation(t *testing.T) {
 	sk2, pk2 := GenerateKeys()
 	sk3, pk3 := GenerateKeys()
 	apk2, err := AggregatePk(apk, pk2, pk3)
+	eprintln("aggregated pks")
+	eprintln(apk)
+	eprintln(pk)
+	eprintln(pk2)
+	eprintln(pk3)
+	eprintln("new aggregated key from 3 above", apk2, err)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -86,11 +92,13 @@ func TestAggregation(t *testing.T) {
 	}
 
 	aggSig, err := AggregateSig(sig, sig2, sig3)
+	eprintln("aggregated signature", aggSig)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Aggregated verification
+	eprintln("verifying", apk2, aggSig, msg)
 	err = Verify(apk2, aggSig, msg)
 	if err != nil {
 		t.Fatal(err)
