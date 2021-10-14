@@ -15,7 +15,7 @@ func TestIPC(t *testing.T) {
 	TestGenerateKeys(t)
 	TestSignVerify(t)
 	TestVerifyWrongKey(t)
-	// TestAggregation(t)
+	TestAggregation(t)
 }
 
 func BenchmarkSignIPC(b *testing.B) {
