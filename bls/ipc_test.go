@@ -43,65 +43,61 @@ func TestAggregationSxS(t *testing.T) {
 	sig3 := mustDecode("869bea0b9cb94f30a0b71b50bafcb4fb985f5dbff8e4f783ebfc7228f82a12fb507c8e0ccb0b5230ddddcd6d70ff3f21")
 	aggSig := mustDecode("9607f61411bbc73fcdf0869ac7449b72020b59a4eee41edb7f5820213fcd8cf2d44375839f3ded7de7e9b741600acbeb")
 
+	SwitchToIPC()
 	defer SwitchToCgo()
-	for i := 0; i < 2; i++ {
-		if i == 1 {
-			SwitchToIPC()
-		}
-		eprintln("sk1 := ", hex.EncodeToString(sk1), "\npk1 := ", hex.EncodeToString(pk1))
-		eprintln("msg := \"" + hex.EncodeToString(msg) + "\"")
-		sig1a, err := Sign(sk1, pk1, msg)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, hex.EncodeToString(sig1), hex.EncodeToString(sig1a))
-		eprintln("sig1 := \"" + hex.EncodeToString(sig1) + "\"")
+	eprintln("sk1 := ", hex.EncodeToString(sk1), "\npk1 := ", hex.EncodeToString(pk1))
+	eprintln("msg := \"" + hex.EncodeToString(msg) + "\"")
+	sig1a, err := Sign(sk1, pk1, msg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, hex.EncodeToString(sig1), hex.EncodeToString(sig1a))
+	eprintln("sig1 := \"" + hex.EncodeToString(sig1) + "\"")
 
-		apk1a, err := CreateApk(pk1)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, hex.EncodeToString(apk1), hex.EncodeToString(apk1a))
-		eprintln("apk1 := \"" + hex.EncodeToString(apk1) + "\"")
+	apk1a, err := CreateApk(pk1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, hex.EncodeToString(apk1), hex.EncodeToString(apk1a))
+	eprintln("apk1 := \"" + hex.EncodeToString(apk1) + "\"")
 
-		eprintln("sk2 := \""+hex.EncodeToString(sk2), "pk2", hex.EncodeToString(pk2)+"\"")
-		eprintln("sk3 := \""+hex.EncodeToString(sk3), "pk3", hex.EncodeToString(pk3)+"\"")
+	eprintln("sk2 := \""+hex.EncodeToString(sk2), "pk2", hex.EncodeToString(pk2)+"\"")
+	eprintln("sk3 := \""+hex.EncodeToString(sk3), "pk3", hex.EncodeToString(pk3)+"\"")
 
-		// Aggregating pk
-		apk2a, err := AggregatePk(apk1, pk2, pk3)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, hex.EncodeToString(apk2), hex.EncodeToString(apk2a))
-		eprintln("apk2 := \""+hex.EncodeToString(apk2)+"\"", err)
+	// Aggregating pk
+	apk2a, err := AggregatePk(apk1, pk2, pk3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, hex.EncodeToString(apk2), hex.EncodeToString(apk2a))
+	eprintln("apk2 := \""+hex.EncodeToString(apk2)+"\"", err)
 
-		// Aggregating sigs
-		sig2a, err := Sign(sk2, pk2, msg)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, hex.EncodeToString(sig2), hex.EncodeToString(sig2a))
-		eprintln("sig2 := \"" + hex.EncodeToString(sig2) + "\"")
+	// Aggregating sigs
+	sig2a, err := Sign(sk2, pk2, msg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, hex.EncodeToString(sig2), hex.EncodeToString(sig2a))
+	eprintln("sig2 := \"" + hex.EncodeToString(sig2) + "\"")
 
-		sig3a, err := Sign(sk3, pk3, msg)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, hex.EncodeToString(sig3), hex.EncodeToString(sig3a))
-		eprintln("sig3 := \"" + hex.EncodeToString(sig3) + "\"")
+	sig3a, err := Sign(sk3, pk3, msg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, hex.EncodeToString(sig3), hex.EncodeToString(sig3a))
+	eprintln("sig3 := \"" + hex.EncodeToString(sig3) + "\"")
 
-		aggSiga, err := AggregateSig(sig1, sig2, sig3)
-		if err != nil {
-			t.Fatal(err)
-		}
-		assert.Equal(t, hex.EncodeToString(aggSig), hex.EncodeToString(aggSiga))
-		eprintln("aggSig := \"" + hex.EncodeToString(aggSig) + "\"")
+	aggSiga, err := AggregateSig(sig1, sig2, sig3)
+	if err != nil {
+		t.Fatal(err)
+	}
+	assert.Equal(t, hex.EncodeToString(aggSig), hex.EncodeToString(aggSiga))
+	eprintln("aggSig := \"" + hex.EncodeToString(aggSig) + "\"")
 
-		// Aggregated verification
-		err = Verify(apk2, aggSig, msg)
-		if err != nil {
-			t.Fatal(err)
-		}
+	// Aggregated verification
+	err = Verify(apk2, aggSig, msg)
+	if err != nil {
+		t.Fatal(err)
 	}
 }
 
