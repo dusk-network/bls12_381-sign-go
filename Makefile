@@ -35,3 +35,6 @@ installprotocubuntu: # like it says on the tin
 	go install google.golang.org/grpc
 	go install github.com/golang/protobuf/protoc-gen-go
 
+memprofile:
+	go test -run=. -bench=. -benchtime=5s -count 1 -benchmem -cpuprofile=cpu.out -memprofile=mem.out -trace=trace.out . | tee bench.txt
+	go tool pprof -http :8081 mem.out
