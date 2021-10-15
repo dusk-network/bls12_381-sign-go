@@ -9,6 +9,9 @@ import (
 
 func TestGenerateKeys(t *testing.T) {
 	sk, pk := GenerateKeys()
+	if sk == nil || pk == nil {
+		t.Fatal("generate keys failed")
+	}
 	assert.NotEqual(t, sk, make([]byte, 32))
 	assert.NotEqual(t, pk, make([]byte, 96))
 }
@@ -95,6 +98,10 @@ func TestAggregation(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func BenchmarkInit(b *testing.B) {
+	SwitchToIPC()
 }
 
 func BenchmarkSign(b *testing.B) {

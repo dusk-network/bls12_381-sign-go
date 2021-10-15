@@ -45,7 +45,7 @@ func SwitchToIPC() {
 	CreateApk = ipc.CreateApk
 	AggregatePk = ipc.AggregatePk
 	AggregateSig = ipc.AggregateSig
-	time.Sleep(time.Second / 4)
+	time.Sleep(time.Second / 2)
 }
 
 type ipcState struct {
@@ -56,8 +56,8 @@ type ipcState struct {
 }
 
 const (
-	// ipcPath       = "/tmp/bls12381svc.sock"
-	ipcPath       = "127.0.0.1:9476"
+	ipcPath = "/tmp/bls12381svc.sock"
+	//ipcPath       = "127.0.0.1:9476"
 	ipcSvcBinPath = "/tmp/bls12381svc"
 )
 
@@ -85,11 +85,11 @@ func (s *ipcState) connect() {
 		panic(err)
 	}
 
-	time.Sleep(time.Second / 4)
+	time.Sleep(time.Second / 2)
 
 	// connect the IPC
 	dialer := func(ctx context.Context, path string) (net.Conn, error) {
-		return net.Dial("tcp", ipcPath)
+		return net.Dial("unix", ipcPath)
 	}
 
 	var err error
@@ -130,13 +130,13 @@ func (s *ipcState) disconnect() {
 		panic(err)
 	}
 
-	// // remove the socket file
-	// if err := os.Remove(ipcPath); err != nil {
-	// 	// panic(err)
-	// 	eprintln(err)
-	// } else {
-	// 	eprintln("removed socket", ipcPath)
-	// }
+	// remove the socket file
+	if err := os.Remove(ipcPath); err != nil {
+		// panic(err)
+		eprintln(err)
+		//} else {
+		//	eprintln("removed socket", ipcPath)
+	}
 
 	// remove the service binary
 	if err := os.Remove(ipcSvcBinPath); err != nil {
