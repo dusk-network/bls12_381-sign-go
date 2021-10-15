@@ -45,24 +45,17 @@ func TestAggregationSxS(t *testing.T) {
 
 	SwitchToIPC()
 	defer SwitchToCgo()
-	eprintln("sk1 := ", hex.EncodeToString(sk1), "\npk1 := ", hex.EncodeToString(pk1))
-	eprintln("msg := \"" + hex.EncodeToString(msg) + "\"")
 	sig1a, err := Sign(sk1, pk1, msg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, hex.EncodeToString(sig1), hex.EncodeToString(sig1a))
-	eprintln("sig1 := \"" + hex.EncodeToString(sig1) + "\"")
 
 	apk1a, err := CreateApk(pk1)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, hex.EncodeToString(apk1), hex.EncodeToString(apk1a))
-	eprintln("apk1 := \"" + hex.EncodeToString(apk1) + "\"")
-
-	eprintln("sk2 := \""+hex.EncodeToString(sk2), "pk2", hex.EncodeToString(pk2)+"\"")
-	eprintln("sk3 := \""+hex.EncodeToString(sk3), "pk3", hex.EncodeToString(pk3)+"\"")
 
 	// Aggregating pk
 	apk2a, err := AggregatePk(apk1, pk2, pk3)
@@ -70,7 +63,6 @@ func TestAggregationSxS(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, hex.EncodeToString(apk2), hex.EncodeToString(apk2a))
-	eprintln("apk2 := \""+hex.EncodeToString(apk2)+"\"", err)
 
 	// Aggregating sigs
 	sig2a, err := Sign(sk2, pk2, msg)
@@ -78,21 +70,18 @@ func TestAggregationSxS(t *testing.T) {
 		t.Fatal(err)
 	}
 	assert.Equal(t, hex.EncodeToString(sig2), hex.EncodeToString(sig2a))
-	eprintln("sig2 := \"" + hex.EncodeToString(sig2) + "\"")
 
 	sig3a, err := Sign(sk3, pk3, msg)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, hex.EncodeToString(sig3), hex.EncodeToString(sig3a))
-	eprintln("sig3 := \"" + hex.EncodeToString(sig3) + "\"")
 
 	aggSiga, err := AggregateSig(sig1, sig2, sig3)
 	if err != nil {
 		t.Fatal(err)
 	}
 	assert.Equal(t, hex.EncodeToString(aggSig), hex.EncodeToString(aggSiga))
-	eprintln("aggSig := \"" + hex.EncodeToString(aggSig) + "\"")
 
 	// Aggregated verification
 	err = Verify(apk2, aggSig, msg)
@@ -101,26 +90,72 @@ func TestAggregationSxS(t *testing.T) {
 	}
 }
 
-func BenchmarkSignIPC(b *testing.B) {
+func BenchmarkIPC(b *testing.B) {
 	SwitchToIPC()
-	defer SwitchToCgo()
+}
+
+func BenchmarkSignIPC(b *testing.B) {
+	//defer SwitchToCgo()
 	BenchmarkSign(b)
+	//BenchmarkVerify(b)
+	//BenchmarkAggregatePk(b)
+	//BenchmarkAggregateSig(b)
 }
 
 func BenchmarkVerifyIPC(b *testing.B) {
-	SwitchToIPC()
-	defer SwitchToCgo()
+	//SwitchToIPC()
+	//defer SwitchToCgo()
+	//	BenchmarkSign(b)
 	BenchmarkVerify(b)
+	//	BenchmarkAggregatePk(b)
+	//	BenchmarkAggregateSig(b)
 }
 
 func BenchmarkAggregatePkIPC(b *testing.B) {
-	SwitchToIPC()
-	defer SwitchToCgo()
+	//SwitchToIPC()
+	//defer SwitchToCgo()
+	//	BenchmarkSign(b)
+	//	BenchmarkVerify(b)
 	BenchmarkAggregatePk(b)
+	//	BenchmarkAggregateSig(b)
 }
 
 func BenchmarkAggregateSigIPC(b *testing.B) {
-	SwitchToIPC()
-	defer SwitchToCgo()
+	//SwitchToIPC()
+	//	BenchmarkSign(b)
+	//	BenchmarkVerify(b)
+	//	BenchmarkAggregatePk(b)
+	BenchmarkAggregateSig(b)
+}
+
+func BenchmarkCgo(b *testing.B) {
+	SwitchToCgo()
+}
+
+func BenchmarkSignCgo(b *testing.B) {
+	BenchmarkSign(b)
+	//BenchmarkVerify(b)
+	//BenchmarkAggregatePk(b)
+	//BenchmarkAggregateSig(b)
+}
+
+func BenchmarkVerifyCgo(b *testing.B) {
+	//	BenchmarkSign(b)
+	BenchmarkVerify(b)
+	//	BenchmarkAggregatePk(b)
+	//	BenchmarkAggregateSig(b)
+}
+
+func BenchmarkAggregatePkCgo(b *testing.B) {
+	//	BenchmarkSign(b)
+	//	BenchmarkVerify(b)
+	BenchmarkAggregatePk(b)
+	//	BenchmarkAggregateSig(b)
+}
+
+func BenchmarkAggregateSigCgo(b *testing.B) {
+	//	BenchmarkSign(b)
+	//	BenchmarkVerify(b)
+	//	BenchmarkAggregatePk(b)
 	BenchmarkAggregateSig(b)
 }

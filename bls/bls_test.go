@@ -2,7 +2,6 @@ package bls
 
 import (
 	"crypto/rand"
-	"encoding/hex"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -55,51 +54,41 @@ func TestVerifyWrongKey(t *testing.T) {
 
 func TestAggregation(t *testing.T) {
 	sk1, pk1 := GenerateKeys()
-	eprintln("sk1 := ", hex.EncodeToString(sk1), "\npk1 := ", hex.EncodeToString(pk1))
 	msg := make([]byte, 100)
 	rand.Read(msg)
-	eprintln("msg := \"" + hex.EncodeToString(msg) + "\"")
 	sig1, err := Sign(sk1, pk1, msg)
 	if err != nil {
 		t.Fatal(err)
 	}
-	eprintln("sig1 := \"" + hex.EncodeToString(sig1) + "\"")
 
 	apk1, err := CreateApk(pk1)
 	if err != nil {
 		t.Fatal(err)
 	}
-	eprintln("apk1 := \"" + hex.EncodeToString(apk1) + "\"")
 
 	// Aggregating pk
 	sk2, pk2 := GenerateKeys()
-	eprintln("sk2 := \""+hex.EncodeToString(sk2), "pk2", hex.EncodeToString(pk2)+"\"")
 	sk3, pk3 := GenerateKeys()
-	eprintln("sk3 := \""+hex.EncodeToString(sk3), "pk3", hex.EncodeToString(pk3)+"\"")
 	apk2, err := AggregatePk(apk1, pk2, pk3)
 	if err != nil {
 		t.Fatal(err)
 	}
-	eprintln("apk2 := \""+hex.EncodeToString(apk2)+"\"", err)
 
 	// Aggregating sigs
 	sig2, err := Sign(sk2, pk2, msg)
 	if err != nil {
 		t.Fatal(err)
 	}
-	eprintln("sig2 := \"" + hex.EncodeToString(sig2) + "\"")
 
 	sig3, err := Sign(sk3, pk3, msg)
 	if err != nil {
 		t.Fatal(err)
 	}
-	eprintln("sig3 := \"" + hex.EncodeToString(sig3) + "\"")
 
 	aggSig, err := AggregateSig(sig1, sig2, sig3)
 	if err != nil {
 		t.Fatal(err)
 	}
-	eprintln("aggSig := \"" + hex.EncodeToString(aggSig) + "\"")
 
 	// Aggregated verification
 	err = Verify(apk2, aggSig, msg)

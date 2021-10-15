@@ -27,7 +27,6 @@ type Bls12381Sign interface {
 }
 
 func SwitchToCgo() {
-	eprintln("switching to cgo...")
 	ipc.disconnect()
 	GenerateKeys = cgo.GenerateKeys
 	Sign = cgo.Sign
@@ -35,12 +34,10 @@ func SwitchToCgo() {
 	CreateApk = cgo.CreateApk
 	AggregatePk = cgo.AggregatePk
 	AggregateSig = cgo.AggregateSig
-	time.Sleep(time.Second)
-	eprintln("switched")
+	time.Sleep(time.Second / 4)
 }
 
 func SwitchToIPC() {
-	eprintln("switching to ipc...")
 	ipc.connect()
 	GenerateKeys = ipc.GenerateKeys
 	Sign = ipc.Sign
@@ -48,8 +45,7 @@ func SwitchToIPC() {
 	CreateApk = ipc.CreateApk
 	AggregatePk = ipc.AggregatePk
 	AggregateSig = ipc.AggregateSig
-	time.Sleep(time.Second)
-	eprintln("switched")
+	time.Sleep(time.Second / 4)
 }
 
 type ipcState struct {
@@ -73,14 +69,12 @@ func (s *ipcState) connect() {
 	}
 	if _, err := os.Stat(ipcSvcBinPath); os.IsNotExist(err) {
 		// write the IPC service binary to disk
-		eprintln("writing service binary to", ipcSvcBinPath, "...")
 		if err := ioutil.WriteFile(
 			ipcSvcBinPath, bls12381svc.Binary, 0o700,
 		); err != nil {
 			panic(err) // not sure what better to do just yet
 		}
 	}
-	eprintln("starting service binary from", ipcSvcBinPath, "...")
 
 	// spawn the IPC service
 	s.cmd = exec.Command(ipcSvcBinPath)
@@ -91,15 +85,13 @@ func (s *ipcState) connect() {
 		panic(err)
 	}
 
-	eprintln("service started, waiting 1 second...")
-	time.Sleep(time.Second)
+	time.Sleep(time.Second / 4)
 
 	// connect the IPC
 	dialer := func(ctx context.Context, path string) (net.Conn, error) {
 		return net.Dial("tcp", ipcPath)
 	}
 
-	eprintln("dialing service at", ipcPath, "...")
 	var err error
 	s.ClientConn, err = grpc.Dial(
 		ipcPath,
@@ -111,7 +103,6 @@ func (s *ipcState) connect() {
 	}
 
 	s.SignerClient = proto.NewSignerClient(s.ClientConn)
-	eprintln("connected to service at", ipcPath, "...")
 
 	s.connected = true
 }
@@ -131,16 +122,12 @@ func (s *ipcState) disconnect() {
 	// disconnect the IPC
 	if err := s.ClientConn.Close(); err != nil {
 		eprintln(err)
-	} else {
-		eprintln("closed client connection")
 	}
 
 	// stop the IPC service. The service knows SIGINT means shut down so it will
 	// stop and release its resources from this signal
 	if err := s.cmd.Process.Signal(syscall.SIGINT); err != nil {
 		panic(err)
-	} else {
-		eprintln("stopped process", ipcSvcBinPath)
 	}
 
 	// // remove the socket file
@@ -161,7 +148,6 @@ func (s *ipcState) GenerateKeys() (secret []byte, public []byte) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
 	}
-	eprintln("calling GenerateKeys...")
 	ctx, cancel := context.WithCancel(context.Background())
 	keys, err := s.SignerClient.GenerateKeys(
 		ctx,
@@ -173,7 +159,6 @@ func (s *ipcState) GenerateKeys() (secret []byte, public []byte) {
 		return nil, nil
 	}
 	sk, pk := keys.GetSecretKey(), keys.GetPublicKey()
-	eprintln("keys:", sk, pk)
 	cancel()
 	return sk, pk
 }
@@ -185,7 +170,6 @@ func (s *ipcState) Sign(sk, pk, msg []byte) (
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
 	}
-	eprintln("calling Sign...")
 	sig, err := s.SignerClient.Sign(context.Background(),
 		&proto.SignRequest{
 			SecretKey: sk,
@@ -197,7 +181,6 @@ func (s *ipcState) Sign(sk, pk, msg []byte) (
 		return nil, err
 	}
 	sign := sig.GetSignature()
-	eprintln("signature:", sign)
 	return sign, nil
 }
 
@@ -205,7 +188,6 @@ func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
 	}
-	eprintln("calling Verify...")
 	var vr *proto.VerifyResponse
 	vr, err = s.SignerClient.Verify(context.Background(),
 		&proto.VerifyRequest{
@@ -214,7 +196,6 @@ func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
 			Message:   msg,
 		},
 	)
-	eprintln("verify:", vr, err)
 	if !vr.GetValid() {
 		return errors.New("invalid signature")
 	}
@@ -225,7 +206,6 @@ func (s *ipcState) CreateApk(pk []byte) (apk []byte, err error) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
 	}
-	eprintln("calling CreateApk...")
 	var a *proto.CreateAPKResponse
 	a, err = s.SignerClient.CreateAPK(context.Background(),
 		&proto.CreateAPKRequest{
@@ -233,7 +213,6 @@ func (s *ipcState) CreateApk(pk []byte) (apk []byte, err error) {
 		},
 	)
 	apk = a.GetAPK()
-	eprintln("apk:", apk)
 	return
 }
 
@@ -244,7 +223,6 @@ func (s *ipcState) AggregatePk(apk []byte, pks ...[]byte) (
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
 	}
-	eprintln("calling AggregatePk...", apk, pks)
 	var a *proto.AggregateResponse
 	a, err = s.SignerClient.AggregatePK(context.Background(),
 		&proto.AggregatePKRequest{
@@ -253,7 +231,6 @@ func (s *ipcState) AggregatePk(apk []byte, pks ...[]byte) (
 		},
 	)
 	newApk = a.GetCode()
-	eprintln("new apk:", apk)
 	return
 }
 
@@ -264,7 +241,6 @@ func (s *ipcState) AggregateSig(sig []byte, sigs ...[]byte) (
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
 	}
-	eprintln("calling AggregateSig...")
 	var a *proto.AggregateResponse
 	a, err = s.SignerClient.AggregateSig(context.Background(),
 		&proto.AggregateSigRequest{
@@ -273,6 +249,5 @@ func (s *ipcState) AggregateSig(sig []byte, sigs ...[]byte) (
 		},
 	)
 	aggregatedSig = a.GetCode()
-	eprintln("aggregated sig:", aggregatedSig)
 	return
 }
