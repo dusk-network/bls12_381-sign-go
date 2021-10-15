@@ -100,10 +100,6 @@ func TestAggregation(t *testing.T) {
 	}
 }
 
-func BenchmarkInit(b *testing.B) {
-	SwitchToIPC()
-}
-
 func BenchmarkSign(b *testing.B) {
 	sk, pk := GenerateKeys()
 	msg := make([]byte, 100)
@@ -161,6 +157,83 @@ func BenchmarkAggregatePk(b *testing.B) {
 }
 
 func BenchmarkAggregateSig(b *testing.B) {
+	sk, pk := GenerateKeys()
+	msg := make([]byte, 100)
+	rand.Read(msg)
+
+	sig, err := Sign(sk, pk, msg)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if _, err := AggregateSig(sig, sig); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkSwitchToIPC(b *testing.B) {
+	SwitchToIPC()
+}
+func BenchmarkSignIPC(b *testing.B) {
+	sk, pk := GenerateKeys()
+	msg := make([]byte, 100)
+	rand.Read(msg)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if _, err := Sign(sk, pk, msg); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkVerifyIPC(b *testing.B) {
+	sk, pk := GenerateKeys()
+	msg := make([]byte, 100)
+	rand.Read(msg)
+
+	sig, err := Sign(sk, pk, msg)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	apk, err := CreateApk(pk)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		if err := Verify(apk, sig, msg); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkAggregatePkIPC(b *testing.B) {
+	_, pk := GenerateKeys()
+
+	apk, err := CreateApk(pk)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	pks := make([][]byte, b.N)
+	for i := 0; i < b.N; i++ {
+		_, pk := GenerateKeys()
+		pks[i] = pk
+	}
+
+	b.ResetTimer()
+	for i := 0; i < len(pks); i++ {
+		AggregatePk(apk, pks[i])
+	}
+}
+
+func BenchmarkAggregateSigIPC(b *testing.B) {
 	sk, pk := GenerateKeys()
 	msg := make([]byte, 100)
 	rand.Read(msg)

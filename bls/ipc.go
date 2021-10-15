@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/dusk-network/bls12_381-sign-go/bls/proto"
+	"google.golang.org/grpc"
 	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
 	"syscall"
 	"time"
-
-	"github.com/dusk-network/bls12_381-sign-go/bls/proto"
-	"google.golang.org/grpc"
 
 	bls12381svc "github.com/dusk-network/bls12_381-sign-go"
 )
@@ -34,7 +33,6 @@ func SwitchToCgo() {
 	CreateApk = cgo.CreateApk
 	AggregatePk = cgo.AggregatePk
 	AggregateSig = cgo.AggregateSig
-	time.Sleep(time.Second / 4)
 }
 
 func SwitchToIPC() {
@@ -85,7 +83,7 @@ func (s *ipcState) connect() {
 		panic(err)
 	}
 
-	time.Sleep(time.Second / 2)
+	time.Sleep(time.Second / 4)
 
 	// connect the IPC
 	dialer := func(ctx context.Context, path string) (net.Conn, error) {
@@ -94,7 +92,7 @@ func (s *ipcState) connect() {
 
 	var err error
 	s.ClientConn, err = grpc.Dial(
-		ipcPath,
+		"unix://"+ipcPath,
 		grpc.WithInsecure(),
 		grpc.WithContextDialer(dialer),
 	)
@@ -103,7 +101,7 @@ func (s *ipcState) connect() {
 	}
 
 	s.SignerClient = proto.NewSignerClient(s.ClientConn)
-
+	s.ClientConn.Connect()
 	s.connected = true
 }
 

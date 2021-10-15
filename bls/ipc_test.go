@@ -1,49 +1,46 @@
 package bls
 
-import (
-	"testing"
-)
-
-// func TestSwitchToIPC(t *testing.T) {
-// 	SwitchToIPC()
-// 	SwitchToCgo()
-// }
-
-func TestGenerateKeysIPC(t *testing.T) {
-	SwitchToIPC()
-	defer SwitchToCgo()
-	TestGenerateKeys(t)
-	//TestSignVerify(t)
-	//TestVerifyWrongKey(t)
-	//TestAggregation(t)
-}
-
-func TestSignIPC(t *testing.T) {
-	SwitchToIPC()
-	defer SwitchToCgo()
-	//TestGenerateKeys(t)
-	TestSignVerify(t)
-	//TestVerifyWrongKey(t)
-	//TestAggregation(t)
-}
-
-func TestVerifyWrongKeyIPC(t *testing.T) {
-	SwitchToIPC()
-	defer SwitchToCgo()
-	//TestGenerateKeys(t)
-	//TestSignVerify(t)
-	TestVerifyWrongKey(t)
-	//TestAggregation(t)
-}
-
-func TestAggregationIPC(t *testing.T) {
-	SwitchToIPC()
-	defer SwitchToCgo()
-	//TestGenerateKeys(t)
-	//TestSignVerify(t)
-	//TestVerifyWrongKey(t)
-	TestAggregation(t)
-}
+//
+//func TestSwitchToIPC(t *testing.T) {
+//	SwitchToIPC()
+//// 	SwitchToCgo()
+//}
+//
+//func TestGenerateKeysIPC(t *testing.T) {
+//	//SwitchToIPC()
+//	//defer SwitchToCgo()
+//	TestGenerateKeys(t)
+//	//TestSignVerify(t)
+//	//TestVerifyWrongKey(t)
+//	//TestAggregation(t)
+//}
+//
+//func TestSignIPC(t *testing.T) {
+//	//SwitchToIPC()
+//	//defer SwitchToCgo()
+//	//TestGenerateKeys(t)
+//	TestSignVerify(t)
+//	//TestVerifyWrongKey(t)
+//	//TestAggregation(t)
+//}
+//
+//func TestVerifyWrongKeyIPC(t *testing.T) {
+//	//SwitchToIPC()
+//	//defer SwitchToCgo()
+//	//TestGenerateKeys(t)
+//	//TestSignVerify(t)
+//	TestVerifyWrongKey(t)
+//	//TestAggregation(t)
+//}
+//
+//func TestAggregationIPC(t *testing.T) {
+//	//SwitchToIPC()
+//	//defer SwitchToCgo()
+//	//TestGenerateKeys(t)
+//	//TestSignVerify(t)
+//	//TestVerifyWrongKey(t)
+//	TestAggregation(t)
+//}
 
 //func mustDecode(str string) []byte {
 //	ret, err := hex.DecodeString(str)
