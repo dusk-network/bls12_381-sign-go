@@ -7,7 +7,7 @@ build:
   		cd bls \
   		&& git clone https://github.com/dusk-network/bls12_381-sign \
   		&& cd bls12_381-sign \
-		&& git checkout microservice; \
+		&& git checkout benchmarks; \
 	fi; \
 	if [ $(shell uname -o) = "GNU/Linux" ]; \
 	then \
