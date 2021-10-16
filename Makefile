@@ -4,17 +4,17 @@ build:
 		cd bls/bls12_381-sign \
 		&& git pull; \
 	else \
-  		cd bls; \
-  		git clone https://github.com/dusk-network/bls12_381-sign; \
-  		cd bls12_381-sign; \
-		git checkout microservice; \
+  		cd bls \
+  		&& git clone https://github.com/dusk-network/bls12_381-sign \
+  		&& cd bls12_381-sign \
+		&& git checkout microservice; \
 	fi; \
 	if [ $(shell uname -o) = "GNU/Linux" ]; \
 	then \
-		protoc --proto_path=proto proto/bls12381sig.proto --go_opt=paths=source_relative --go_out=plugins=grpc:proto; \
-		cargo build --release; \
-		cp target/release/bls12381svc ../../bls12381svc_ubuntu-latest; \
-		cp target/release/libdusk_bls12_381_sign.a ../..libdusk_bls12_381_sign_ubuntu-latest.a; \
+		protoc --proto_path=proto proto/bls12381sig.proto --go_opt=paths=source_relative --go_out=plugins=grpc:proto \
+		&& cargo build --release \
+		&& cp target/release/bls12381svc ../../bls12381svc_ubuntu-latest \
+		&& cp target/release/libdusk_bls12_381_sign.a ../..libdusk_bls12_381_sign_ubuntu-latest.a; \
 	else \
 		echo "not implemented yet for mac or windows"; \
 	fi; \
@@ -36,5 +36,13 @@ installprotocubuntu: # like it says on the tin
 	go install github.com/golang/protobuf/protoc-gen-go
 
 memprofile:
-	go test -run=. -bench=. -benchtime=5s -count 1 -benchmem -cpuprofile=cpu.out -memprofile=mem.out -trace=trace.out . | tee bench.txt
+	rm /tmp/bls12381svc*; \
+	go test -run=. -bench=. -benchtime=5s -count 1 -benchmem -cpuprofile=cpu.out -memprofile=mem.out -trace=trace.out ./... | tee bench.txt
 	go tool pprof -http :8081 mem.out
+
+benchmem: build test
+	rm /tmp/bls12381svc*; \
+	go test -run=. -bench=. -benchtime=5s -count 1 -benchmem ./...
+	cd bls/bls12_381-sign; \
+	cargo bench; \
+	rm /tmp/bls12381svc*
