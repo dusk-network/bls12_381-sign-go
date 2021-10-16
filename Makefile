@@ -21,10 +21,13 @@ build:
 	go build ../../...
 
 test: build
+	rm -fv /tmp/bls12381svc*
 	go test -v ./...
 
 bench: build
+	rm -fv /tmp/bls12381svc*
 	go test -v -bench=. ./...
+	rm -fv /tmp/bls12381svc*
 
 clean:
 	rm -fv /tmp/bls12381svc*
@@ -34,11 +37,13 @@ installprotocubuntu: # like it says on the tin
 	sudo apt install -y protobuf-compiler
 	go install google.golang.org/grpc
 	go install github.com/golang/protobuf/protoc-gen-go
+	rm -fv /tmp/bls12381svc*
 
 memprofile:
 	rm /tmp/bls12381svc*; \
 	go test -run=. -bench=. -benchtime=5s -count 1 -benchmem -cpuprofile=cpu.out -memprofile=mem.out -trace=trace.out ./... | tee bench.txt
 	go tool pprof -http :8081 mem.out
+	rm -fv /tmp/bls12381svc*
 
 benchmem: build test
 	rm /tmp/bls12381svc*; \
