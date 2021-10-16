@@ -38,3 +38,6 @@ installprotocubuntu: # like it says on the tin
 memprofile:
 	go test -run=. -bench=. -benchtime=5s -count 1 -benchmem -cpuprofile=cpu.out -memprofile=mem.out -trace=trace.out . | tee bench.txt
 	go tool pprof -http :8081 mem.out
+
+benchmem:
+	go test -run=. -bench=. -benchtime=5s -count 1 -benchmem
