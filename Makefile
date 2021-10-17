@@ -39,7 +39,6 @@ installprotocubuntu: # like it says on the tin
 	sudo apt install -y protobuf-compiler
 	go install google.golang.org/grpc
 	go install github.com/golang/protobuf/protoc-gen-go
-	rm -fv /tmp/bls12381svc*
 
 memprofile:
 	rm /tmp/bls12381svc*; \
