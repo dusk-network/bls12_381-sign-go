@@ -145,6 +145,7 @@ func (s *ipcState) disconnect() {
 func (s *ipcState) GenerateKeys() (secret []byte, public []byte) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
+		return
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	keys, err := s.SignerClient.GenerateKeys(
@@ -167,6 +168,7 @@ func (s *ipcState) Sign(sk, pk, msg []byte) (
 ) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
+		return
 	}
 	sig, err := s.SignerClient.Sign(context.Background(),
 		&proto.SignRequest{
@@ -185,6 +187,7 @@ func (s *ipcState) Sign(sk, pk, msg []byte) (
 func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
+		return
 	}
 	var vr *proto.VerifyResponse
 	vr, err = s.SignerClient.Verify(context.Background(),
@@ -203,6 +206,7 @@ func (s *ipcState) Verify(apk, sig, msg []byte) (err error) {
 func (s *ipcState) CreateApk(pk []byte) (apk []byte, err error) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
+		return
 	}
 	var a *proto.CreateAPKResponse
 	a, err = s.SignerClient.CreateAPK(context.Background(),
@@ -220,6 +224,7 @@ func (s *ipcState) AggregatePk(apk []byte, pks ...[]byte) (
 ) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
+		return
 	}
 	var a *proto.AggregateResponse
 	a, err = s.SignerClient.AggregatePK(context.Background(),
@@ -238,6 +243,7 @@ func (s *ipcState) AggregateSig(sig []byte, sigs ...[]byte) (
 ) {
 	if !s.connected {
 		eprintln("attempting to call API without being connected")
+		return
 	}
 	var a *proto.AggregateResponse
 	a, err = s.SignerClient.AggregateSig(context.Background(),
