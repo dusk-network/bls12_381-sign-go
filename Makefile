@@ -8,7 +8,7 @@ build:
   		&& git clone https://github.com/dusk-network/bls12_381-sign \
   		&& cd bls12_381-sign \
 		&& git checkout microservice; \
-	fi; \
+	fi;
 	if [ $(shell uname -o) = "GNU/Linux" ]; \
 	then \
 		protoc --proto_path=proto proto/bls12381sig.proto \
