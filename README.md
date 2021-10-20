@@ -42,21 +42,8 @@ make benchmem
 
 ### Machine specs
 
-The benchmarks were ran on a 2020 Lenovo Ideapad 3 15ADA05 laptop with 9.6gb of DDR2400 memory (remainder dedicated to
+The benchmarks were run on a 2020 Lenovo Ideapad 3 15ADA05 laptop with 9.6gb of DDR2400 memory (remainder dedicated to
 GPU).
-
-CPU:
-
-```
-$ lscpu
-Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz
-```
-
-RAM:
-
-```
-16 GB 3733 MHz LPDDR4X
-```
 
 ### Results
 
