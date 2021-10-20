@@ -49,4 +49,4 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run all bls12-381 benches for Cgo, IPC and the Rust benchmarks
-        run: make benchmem
+        run: /usr/bin/make benchmem
