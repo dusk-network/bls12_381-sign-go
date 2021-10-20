@@ -1,6 +1,6 @@
-name: Benchmarks
 on:
   workflow_dispatch:
+name: Benchmarks
 jobs:
   build:
     runs-on: ubuntu-latest
