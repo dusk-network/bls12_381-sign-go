@@ -40,7 +40,7 @@ jobs:
           name: bls12381svc_${{ matrix.os }}
           path: bls12_381-sign/target/release/bls12381svc
   benchmark:
-    runs-on: benchmark
+    runs-on: ${{ matrix.os }}
     steps:
        - name: Install Go
          uses: actions/setup-go@v2
