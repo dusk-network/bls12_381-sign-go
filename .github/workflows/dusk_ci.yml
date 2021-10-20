@@ -39,4 +39,6 @@ jobs:
         with:
           name: bls12381svc_${{ matrix.os }}
           path: bls12_381-sign/target/release/bls12381svc
+      - name: Run benchmarks
+        run: make benchmem
 
