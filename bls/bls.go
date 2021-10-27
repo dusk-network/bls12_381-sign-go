@@ -20,6 +20,19 @@ func GenerateKeys() ([]byte, []byte) {
 	return skBuf, pkBuf
 }
 
+func GenerateKeysWithRaw() ([]byte, []byte, []byte) {
+	skBuf := make([]byte, C.SK_SIZE)
+	pkBuf := make([]byte, C.PK_SIZE)
+	pkBufRaw := make([]byte, C.PK_RAW_SIZE)
+
+	sk_ptr := toPtr(skBuf)
+	pk_ptr := toPtr(pkBuf)
+	pk_raw_ptr := toPtr(pkBufRaw)
+
+	C.generate_keys_with_raw(sk_ptr, pk_ptr, pk_raw_ptr)
+	return skBuf, pkBuf, pkBufRaw
+}
+
 func Sign(sk, pk, msg []byte) ([]byte, error) {
 	sk_ptr := toPtr(sk)
 	pk_ptr := toPtr(pk)
@@ -60,6 +73,22 @@ func AggregatePk(apk []byte, pks ...[]byte) ([]byte, error) {
 	return retBuf, formatErr(code)
 }
 
+func AggregatePKsUnchecked(pks ...[]byte) ([]byte, error) {
+	pkBytes := make([]byte, 0)
+	for _, pk := range pks {
+		if C.int(len(pk)) != C.PK_RAW_SIZE {
+			return nil, errors.New("invalid bytes provided")
+		}
+		pkBytes = append(pkBytes, pk...)
+	}
+
+	pk_ptr := toPtr(pkBytes)
+	retBuf := make([]byte, C.PK_SIZE)
+	ret_ptr := toPtr(retBuf)
+	C.aggregate_pks_unchecked(pk_ptr, C.size_t(len(pkBytes)), ret_ptr)
+	return retBuf, nil
+}
+
 func AggregateSig(sig []byte, sigs ...[]byte) ([]byte, error) {
 	sig_ptr := toPtr(sig)
 	sigBytes := make([]byte, 0)
@@ -72,6 +101,14 @@ func AggregateSig(sig []byte, sigs ...[]byte) ([]byte, error) {
 	ret_ptr := toPtr(retBuf)
 	code := C.aggregate_sig(sig_ptr, sigs_ptr, C.size_t(len(sigBytes)), ret_ptr)
 	return retBuf, formatErr(code)
+}
+
+func PkToRaw(pk []byte) ([]byte, error) {
+	pk_ptr := toPtr(pk)
+	pkRawBuf := make([]byte, C.PK_RAW_SIZE)
+	pkRaw_ptr := toPtr(pkRawBuf)
+	code := C.pk_to_raw(pk_ptr, pkRaw_ptr)
+	return pkRawBuf, formatErr(code)
 }
 
 func toPtr(data []byte) *C.uchar {
